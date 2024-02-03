@@ -1,6 +1,6 @@
 {
   "name": "greenwebutility",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A helper module for testing and utilities",
   "main": "index.js",
   "scripts": {
