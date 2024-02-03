@@ -2,7 +2,7 @@
   "name": "greenwebutility",
   "version": "1.0.3",
   "description": "A helper module for testing and utilities",
-  "main": "index.js",
+  "main": "src/myModule.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
