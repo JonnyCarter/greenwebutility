@@ -39,7 +39,10 @@ function rollDie() {
     return "4 5 6"
   }
   
+  //Lose comment
   function Lose() {
     return "1 2 3"
   }
+
+
   module.exports = { Win, Lose, getOutcome, rollDice, rollDie };
