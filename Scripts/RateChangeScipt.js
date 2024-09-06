@@ -1,4 +1,4 @@
-const RateChange = require('./src/aprc/RateChange');
+const RateChange = require('../src/aprc/RateChange');
 
 // Create a RateChange instance
 const rateChange = new RateChange(
@@ -14,3 +14,4 @@ const remainingTermMonths = 120; // Remaining term in months
 const newPaymentAmount = rateChange.applyRateChange(remainingPrincipal, remainingTermMonths);
 
 console.log(`New Payment Amount: $${newPaymentAmount.toFixed(2)}`);
+
