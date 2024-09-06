@@ -9,7 +9,8 @@ class Fee {
 
     // Method to check if fee should be included in APRC calculation
     isIncludedInAPRC() {
-        // TODO: Implement logic to determine if the fee is included in APRC calculation.
+       // Include fees that are mandatory and are one-time or recurring (monthly) fees
+       return this.feeIncludedInAPRC && (this.feeFrequency === 'one-time' || this.typfeeFrequency === 'monthly'|| this.typfeeFrequency === 'annually');
     }
 }
 
