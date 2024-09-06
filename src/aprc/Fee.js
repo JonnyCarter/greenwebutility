@@ -1,16 +1,16 @@
 // Fee.js
 class Fee {
-    constructor(feeType, feeAmount, feeFrequency, feeIncludedInAPRC) {
-        this.feeType = feeType;
-        this.feeAmount = feeAmount;
-        this.feeFrequency = feeFrequency;
-        this.feeIncludedInAPRC = feeIncludedInAPRC;
+    constructor(Type, Amount, Frequency, IncludedInAPRC) {
+        this.Type = Type;
+        this.Amount = Amount;
+        this.Frequency = Frequency;
+        this.IncludedInAPRC = IncludedInAPRC;
     }
 
     // Method to check if fee should be included in APRC calculation
     isIncludedInAPRC() {
        // Include fees that are mandatory and are one-time or recurring (monthly) fees
-       return this.feeIncludedInAPRC && (this.feeFrequency === 'one-time' || this.typfeeFrequency === 'monthly'|| this.typfeeFrequency === 'annually');
+       return this.IncludedInAPRC && (this.Frequency === 'one-time' || this.Frequency === 'monthly'|| this.Frequency === 'annually');
     }
 }
 

@@ -1,6 +1,6 @@
 // LoanRequest.js
 class LoanRequest {
-    constructor(loanId, borrowerName, loanAmount, initialInterestRate, initialRateDurationYears, adjustedInterestRate, loanTermYears, repaymentFrequency, fees, startDate) {
+    constructor(loanId, borrowerName, loanAmount, initialInterestRate, initialRateDurationYears, adjustedInterestRate, loanTermYears, repaymentFrequency, fees, startDate, rateChanges) {
         this.loanId = loanId;
         this.borrowerName = borrowerName;
         this.loanAmount = loanAmount;
@@ -11,6 +11,7 @@ class LoanRequest {
         this.repaymentFrequency = repaymentFrequency;
         this.fees = fees; // Array of Fee instances
         this.startDate = startDate;
+        this.rateChanges = rateChanges;
     }
 
     // Validate the loan request inputs

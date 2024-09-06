@@ -1,4 +1,3 @@
-// APRCService.js
 const LoanRequest = require('./aprc/LoanRequest');
 const LoanDetails = require('./aprc/LoanDetails');
 const APRCResponse = require('./aprc/APRCResponse');
@@ -8,48 +7,95 @@ const Error = require('./aprc/Error');
 
 class APRCService {
     constructor() {
-        // TODO: Initialize any required state variables.
+        // Initialize any required state variables, if necessary
     }
 
     // Method to calculate the APRC for a loan request
     calculateAPRC(loanRequest) {
-        // TODO: Implement the logic to calculate the APRC based on the LoanRequest.
-        // 1. Validate the loan request.
-        // 2. Calculate monthly payments and total payable amounts.
-        // 3. Calculate APRC, taking into account fees and rate changes.
-        // 4. Return an APRCResponse.
-         // Validate loan inputs
-         const validationError = this.validateLoanInputs(loanRequest);
-         if (validationError) {
-             // Return the error object
-             return { success: false, error: validationError };
-         }
- 
-         // Perform APRC calculations (mocked for demonstration)
-         const aprcValue = 4.5; // Placeholder value
-         const totalRepayment = loanRequest.loanAmount * 1.1; // Placeholder calculation
-         const monthlyPayment = totalRepayment / (loanRequest.loanTermYears * 12); // Placeholder calculation
-         const rateChanges = loanRequest.rateChanges // Placeholder calculation
+        // Validate loan inputs
+        const validationError = this.validateLoanInputs(loanRequest);
+        if (validationError) {
+            // Return the error object
+            return new APRCResponse(
+                loanRequest.loanId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                validationError
+            ).formatResponse();
+        }
 
-         
-         // Return successful result
-         return {
-             success: true,
-             aprcValue: aprcValue,
-             totalRepayment: totalRepayment,
-             monthlyPayment: monthlyPayment,
-         };
+        // Extract loan details
+        const {
+            loanAmount,
+            initialInterestRate,
+            initialRateDurationYears,
+            adjustedInterestRate,
+            loanTermYears,
+            fees,
+            rateChanges,
+        } = loanRequest;
+
+        // Create a LoanDetails instance
+        const loanDetails = new LoanDetails(
+            loanAmount,
+            initialInterestRate,
+            initialInterestRate,
+            initialRateDurationYears,
+            adjustedInterestRate,
+            loanTermYears * 12, // Convert years to months
+            null, // Monthly payment to be calculated
+            null, // Total payable to be calculated
+            'monthly',
+            'monthly'
+        );
+
+        // Calculate monthly payments and total payable amounts
+        const monthlyPayment = loanDetails.calculateMonthlyPayments();
+        const totalPayable = loanDetails.calculateTotalPayable();
+        const nominalRate = loanDetails.calculateNominalRate();
+
+        // Process rate changes
+        if (rateChanges && rateChanges.length > 0) {
+            this.processRateChanges(loanRequest);
+        }
+
+        // Summarize fees
+        const feesSummary = this.summarizeFees(fees);
+
+        // Calculate APRC
+        const aprcValue = this.calculateAPRCValue(nominalRate, feesSummary.totalFees, loanAmount, totalPayable,30,'Annually');
+        console.log(aprcValue);
+        // Return APRCResponse
+        const aprcResponse = new APRCResponse(
+            loanRequest.loanId,
+            aprcValue,
+            totalPayable,
+            monthlyPayment,
+            feesSummary,
+            rateChanges,
+            true,
+            null
+        );
+
+        return aprcResponse.formatResponse();
     }
 
     // Method to calculate rate changes during the loan term
     processRateChanges(loanRequest) {
-        // TODO: Implement logic to handle step-rate loans (loans with an initial low rate followed by a higher rate).
+        // Implement logic to handle step-rate loans
+        const { rateChanges } = loanRequest;
+        rateChanges.forEach(change => {
+            // Example logic to apply rate change (This is placeholder logic)
+            console.log(`Processing rate change on ${change.changeDate} from ${change.previousRate}% to ${change.newRate}%`);
+        });
     }
 
     // Helper method to validate loan inputs
     validateLoanInputs(loanRequest) {
-        // TODO: Validate loan inputs. If invalid, return an Error object.
-
         const invalidFields = [];
         let isValid = true;
 
@@ -76,12 +122,86 @@ class APRCService {
 
         return null; // No errors
     }
-      
 
     // Method to generate a summary of fees for the APRCResponse
     summarizeFees(fees) {
-        // TODO: Aggregate and summarize the fees to be included in the APRCResponse.
+        let totalFees = 0;
+        let includedFees = [];
+
+        fees.forEach(fee => {
+            if (fee.isIncludedInAPRC()) {
+                totalFees += fee.Amount;
+                includedFees.push(fee);
+            }
+        });
+
+        return {
+            totalFees: totalFees,
+            includedFees: includedFees
+        };
     }
+
+// Method to calculate APRC value
+calculateAPRCValue(nominalRate, totalFees, loanAmount, totalPayable, loanTermYears, paymentFrequency = 'monthly') {
+  // Validate inputs
+  if (typeof nominalRate !== 'number' || isNaN(nominalRate) || nominalRate < 0) {
+      throw new Error('Invalid nominalRate: Must be a non-negative number.');
+  }
+  if (typeof totalFees !== 'number' || isNaN(totalFees) || totalFees < 0) {
+      throw new Error('Invalid totalFees: Must be a non-negative number.');
+  }
+  if (typeof loanAmount !== 'number' || isNaN(loanAmount) || loanAmount <= 0) {
+      throw new Error('Invalid loanAmount: Must be a positive number greater than zero.');
+  }
+  if (typeof totalPayable !== 'number' || isNaN(totalPayable) || totalPayable < loanAmount) {
+      throw new Error('Invalid totalPayable: Must be greater than or equal to loanAmount.');
+  }
+  if (typeof loanTermYears !== 'number' || isNaN(loanTermYears) || loanTermYears <= 0) {
+      throw new Error('Invalid loanTermYears: Must be a positive number.');
+  }
+
+  // Define number of payments per year based on payment frequency
+  let paymentsPerYear;
+  switch (paymentFrequency.toLowerCase()) {
+      case 'monthly':
+          paymentsPerYear = 12;
+          break;
+      case 'quarterly':
+          paymentsPerYear = 4;
+          break;
+      case 'annually':
+          paymentsPerYear = 1;
+          break;
+      default:
+          throw new Error('Invalid paymentFrequency: Must be "monthly", "quarterly", or "annually".');
+  }
+
+  // Calculate total number of payments
+  const numberOfPayments = loanTermYears * paymentsPerYear;
+
+  // Calculate monthly/periodic rate
+  const periodicRate = nominalRate / 100 / paymentsPerYear;
+
+  // If periodic rate is 0, handle it as a special case
+  if (periodicRate === 0) {
+      const aprcZeroRate = ((totalPayable - loanAmount - totalFees) / loanAmount) * 100;
+      return aprcZeroRate;
+  }
+
+  // Calculate periodic payment using the annuity formula
+  const periodicPayment = loanAmount * (periodicRate * Math.pow(1 + periodicRate, numberOfPayments)) / (Math.pow(1 + periodicRate, numberOfPayments) - 1);
+
+  // Calculate total payments including fees
+  const totalRepayment = periodicPayment * numberOfPayments;
+
+  // FCA-compliant APRC calculation: [(Total cost of credit / Loan amount) * 100]
+  // where total cost of credit includes all fees and total repayments
+  const totalCostOfCredit = totalRepayment + totalFees - loanAmount;
+  const aprc = (totalCostOfCredit / loanAmount) * 100;
+
+  return aprc;
+}
+
 }
 
 module.exports = APRCService;
