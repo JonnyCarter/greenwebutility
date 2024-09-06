@@ -196,5 +196,5 @@ json
 ```
 
 ## Conclusion 
-This  data model  supports loans that begin with a low interest rate and move to a higher rate after a fixed period. It tracks rate changes and adjusts payment schedules accordingly, providing an accurate APRC calculation for more complex loan structures such as step-rate loans.
+This data model supports loans that begin with a low interest rate and move to a higher rate after a fixed period. It tracks rate changes and adjusts payment schedules accordingly, providing an accurate APRC calculation for more complex loan structures such as step-rate loans.
 
