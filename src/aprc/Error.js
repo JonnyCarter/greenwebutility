@@ -8,8 +8,11 @@ class Error {
 
     // Method to log or display error details
     logError() {
-        // TODO: Implement logic to log or display error messages, including invalid fields.
-        console.table(Error)
+        console.error(`Error Code: ${this.errorCode}`);
+        console.error(`Error Message: ${this.errorMessage}`);
+        if (this.invalidFields.length > 0) {
+            console.error(`Invalid Fields: ${this.invalidFields.join(', ')}`);
+        }
     }
 }
 
