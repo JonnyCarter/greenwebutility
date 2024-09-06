@@ -29,7 +29,9 @@ class APRCService {
          const aprcValue = 4.5; // Placeholder value
          const totalRepayment = loanRequest.loanAmount * 1.1; // Placeholder calculation
          const monthlyPayment = totalRepayment / (loanRequest.loanTermYears * 12); // Placeholder calculation
- 
+         const rateChanges = loanRequest.rateChanges // Placeholder calculation
+
+         
          // Return successful result
          return {
              success: true,
