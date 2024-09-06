@@ -29,12 +29,27 @@ class LoanDetails {
 
     // Method to calculate total payable amount over the loan term
     calculateTotalPayable() {
-        // TODO: Implement logic to calculate total payable amount over the full loan term.
-    }
+        if (!this.monthlyPayment) {
+            throw new Error('Monthly payment must be calculated first.');
+        }
+
+        // Total payable amount calculation
+        const totalPayable = this.monthlyPayment * this.loanTermMonths;
+        this.totalPayable = totalPayable;
+        return totalPayable;
+        }
 
     // Method to calculate the weighted nominal interest rate over the entire term
     calculateNominalRate() {
-        // TODO: Calculate the nominal rate considering the initial and adjusted interest rates.
+
+        const initialTermMonths = this.initialRateDurationYears * 12;
+        const remainingTermMonths = this.loanTermMonths - initialTermMonths;
+        const initialRate = this.initialInterestRate / 100;
+        const adjustedRate = this.adjustedInterestRate / 100;
+
+        // Weighted average of nominal rates
+        const weightedNominalRate = ((initialRate * initialTermMonths) + (adjustedRate * remainingTermMonths)) / this.loanTermMonths;
+        return weightedNominalRate * 100; // Convert to percentage
     }
 }
 
