@@ -15,8 +15,17 @@ class LoanDetails {
 
     // Method to calculate monthly payments based on rates and term
     calculateMonthlyPayments() {
-        // TODO: Implement logic to calculate monthly payments using the loan amount and interest rates.
-    }
+        const principal = this.loanAmount;
+        const monthlyRate = this.initialInterestRate / 100 / 12;
+        const numberOfPayments = this.loanTermMonths;
+
+        // Monthly payment formula (for fixed-rate period)
+        const monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+
+        // Update class property
+        this.monthlyPayment = monthlyPayment;
+        return monthlyPayment;
+        }
 
     // Method to calculate total payable amount over the loan term
     calculateTotalPayable() {
