@@ -68,7 +68,6 @@ class APRCService {
 
         // Calculate APRC
         const aprcValue = this.calculateAPRCValue(nominalRate, feesSummary.totalFees, loanAmount, totalPayable,30,'Annually');
-        console.log(aprcValue);
         // Return APRCResponse
         const aprcResponse = new APRCResponse(
             loanRequest.loanId,
@@ -125,6 +124,18 @@ class APRCService {
 
     // Method to generate a summary of fees for the APRCResponse
     summarizeFees(fees) {
+
+      if (!Array.isArray(fees)) {
+        fees = [];
+    }
+          // Handle the case where the array is empty
+    if (fees.length === 0) {
+      return {
+          totalFees: 0,
+          includedFees: [], // Return an empty array if no fees are included
+      };
+  }
+
         let totalFees = 0;
         let includedFees = [];
 

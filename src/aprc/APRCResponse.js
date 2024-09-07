@@ -47,7 +47,6 @@ class APRCResponse {
 
     // Method to format rate changes
     formatRateChanges() {
-        console.log(this.rateChanges)
         if (!Array.isArray(this.rateChanges)) {
             return []; // Return an empty array if rateChanges is not an array
         }

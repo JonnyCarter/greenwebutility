@@ -34,7 +34,7 @@ describe('APRCService', () => {
         //console.table(loanRequest);
         // Call the calculateAPRC method on the APRCService instance
         const aprcResponse = aprcService.calculateAPRC(loanRequest);
-        console.table(aprcResponse);
+        //console.table(aprcResponse);
 
         // Check that APRCResponse is not null and the calculation was successful
         expect(aprcResponse).not.toBeNull();
@@ -109,7 +109,6 @@ describe('APRCService', () => {
         // Check that the APRC reflects both the initial and adjusted interest rates
         expect(parseFloat(aprcResponse.aprcValue)).toBeGreaterThan(0);
         expect(parseFloat(aprcResponse.aprcValue)).toBeGreaterThan(loanRequest.initialInterestRate);
-        console.log(loanRequest.adjustedInterestRate);
         expect(parseFloat(aprcResponse.aprcValue)).toBeLessThan(100);
 
         // Check the monthly payments before and after the rate change
