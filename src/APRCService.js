@@ -83,7 +83,7 @@ class APRCService {
         return aprcResponse.formatResponse();
     }
 
-    // Method to calculate rate changes during the loan term
+    // TODO Method to calculate rate changes during the loan term
     processRateChanges(loanRequest) {
         // Implement logic to handle step-rate loans
         const { rateChanges } = loanRequest;
