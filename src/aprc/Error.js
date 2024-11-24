@@ -1,12 +1,9 @@
-// Error.js
 class Error {
     constructor(errorCode, errorMessage, invalidFields) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.invalidFields = invalidFields; // Array of fields that caused the error
     }
-
-    // Method to log or display error details
     logError() {
         console.error(`Error Code: ${this.errorCode}`);
         console.error(`Error Message: ${this.errorMessage}`);
@@ -15,5 +12,4 @@ class Error {
         }
     }
 }
-
 module.exports = Error;
