@@ -3,7 +3,7 @@ const LoanDetails = require('./aprc/LoanDetails');
 const APRCResponse = require('./aprc/APRCResponse');
 const RateChange = require('./aprc/RateChange');
 const Fee = require('./aprc/Fee');
-const Error = require('./aprc/Error');
+const APRCError = require('./aprc/Error');
 class APRCService {
     calculateAPRC(loanRequest) {
         const validationError = this.validateLoanInputs(loanRequest);
@@ -41,6 +41,7 @@ class APRCService {
             'monthly'
         );
         const monthlyPayment = loanDetails.calculateMonthlyPayments();
+        loanDetails.monthlyPayment = monthlyPayment; // ✅ Explicitly set before totalPayable
         const totalPayable = loanDetails.calculateTotalPayable();
         const nominalRate = loanDetails.calculateNominalRate();
         if (rateChanges && rateChanges.length > 0) {
@@ -63,33 +64,52 @@ class APRCService {
     processRateChanges(loanRequest) {
         const { rateChanges } = loanRequest;
         rateChanges.forEach(change => {
-            console.log(`Processing rate change on ${change.changeDate} from ${change.previousRate}% to ${change.newRate}%`);
+            //console.log(`Processing rate change on ${change.changeDate} from ${change.previousRate}% to ${change.newRate}%`);
         });
     }
     validateLoanInputs(loanRequest) {
         const invalidFields = [];
         let isValid = true;
+    
         if (loanRequest.loanAmount <= 0) {
             invalidFields.push('loanAmount');
             isValid = false;
         }
+    
         if (loanRequest.initialInterestRate < 0) {
             invalidFields.push('initialInterestRate');
             isValid = false;
         }
+    
         if (loanRequest.adjustedInterestRate < 0) {
             invalidFields.push('adjustedInterestRate');
             isValid = false;
         }
+    
+        // 🛑 NEW VALIDATION: Ensure rate change dates are valid
+        if (loanRequest.rateChanges && Array.isArray(loanRequest.rateChanges)) {
+            loanRequest.rateChanges.forEach((change) => {
+                if (!change.changeDate || !(change.changeDate instanceof Date)) { // Add null check
+                    invalidFields.push(`RateChange: Missing or invalid changeDate`);
+                    isValid = false;
+                } else if (change.changeDate < loanRequest.startDate) {
+                    invalidFields.push(`RateChange: ${change.changeDate.toISOString()} is before loan start date`);
+                    isValid = false;
+                }
+            });
+        }
+    
         if (!isValid) {
-            return new Error(
+            return new APRCError(
                 'VALIDATION_ERROR',
                 'Invalid loan request data',
                 invalidFields
             );
         }
+    
         return null; // No errors
     }
+    
     summarizeFees(fees) {
       if (!Array.isArray(fees)) {
         fees = [];
@@ -115,19 +135,19 @@ class APRCService {
     }
 calculateAPRCValue(nominalRate, totalFees, loanAmount, totalPayable, loanTermYears, paymentFrequency = 'monthly') {
   if (typeof nominalRate !== 'number' || isNaN(nominalRate) || nominalRate < 0) {
-      throw new Error('Invalid nominalRate: Must be a non-negative number.');
+      throw new APRCError('100','Invalid nominalRate: Must be a non-negative number.','Nominal Rate');
   }
   if (typeof totalFees !== 'number' || isNaN(totalFees) || totalFees < 0) {
-      throw new Error('Invalid totalFees: Must be a non-negative number.');
+      throw new APRCError('101','Invalid totalFees: Must be a non-negative number.','Total Fees');
   }
   if (typeof loanAmount !== 'number' || isNaN(loanAmount) || loanAmount <= 0) {
-      throw new Error('Invalid loanAmount: Must be a positive number greater than zero.');
+      throw new APRCError('102','Invalid loanAmount: Must be a positive number greater than zero.','Loan Amount');
   }
   if (typeof totalPayable !== 'number' || isNaN(totalPayable) || totalPayable < loanAmount) {
-      throw new Error('Invalid totalPayable: Must be greater than or equal to loanAmount.');
+      throw new APRCError('103','Invalid totalPayable: Must be greater than or equal to loanAmount.','Total Payable');
   }
   if (typeof loanTermYears !== 'number' || isNaN(loanTermYears) || loanTermYears <= 0) {
-      throw new Error('Invalid loanTermYears: Must be a positive number.');
+      throw new APRCError('104','Invalid loanTermYears: Must be a positive number.','Loan Term Years');
   }
   let paymentsPerYear;
   switch (paymentFrequency.toLowerCase()) {
@@ -141,7 +161,7 @@ calculateAPRCValue(nominalRate, totalFees, loanAmount, totalPayable, loanTermYea
           paymentsPerYear = 1;
           break;
       default:
-          throw new Error('Invalid paymentFrequency: Must be "monthly", "quarterly", or "annually".');
+          throw new APRCError('105','Invalid paymentFrequency: Must be "monthly", "quarterly", or "annually".','Payment Frequency');
   }
   const numberOfPayments = loanTermYears * paymentsPerYear;
   const periodicRate = nominalRate / 100 / paymentsPerYear;
