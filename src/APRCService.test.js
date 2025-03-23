@@ -134,7 +134,7 @@ describe('APRCService', () => {
     });
     
     
-    /*
+    
     test('should correctly calculate APRC for a zero-interest loan', () => {
         const loanRequest = new LoanRequest(
             '0000-0000', 'Zero Interest Test', 50000.00, 0.00, 5, 0.00, 10, 'monthly', [], new Date('2025-01-01')
@@ -158,7 +158,7 @@ describe('APRCService', () => {
         expect(aprcResponse.success).toBe(true);
         expect(parseFloat(aprcResponse.aprcValue)).toBeCloseTo(0, 1); // Expect near-zero APRC
     });
-    */
+    
     /*
     test('should correctly handle fees that are not included in APRC', () => {
         const fees = [

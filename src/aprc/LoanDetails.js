@@ -15,10 +15,19 @@ class LoanDetails {
         const principal = this.loanAmount;
         const monthlyRate = this.initialInterestRate / 100 / 12;
         const numberOfPayments = this.loanTermMonths;
-        const monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+    
+        if (monthlyRate === 0) { // ✅ Handle 0% interest case
+            this.monthlyPayment = principal / numberOfPayments;
+            return this.monthlyPayment;
+        }
+    
+        const monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) 
+            / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+        
         this.monthlyPayment = monthlyPayment;
         return monthlyPayment;
-        }
+    }
+    
     calculateTotalPayable() {
         if (!this.monthlyPayment) {
             throw new Error('Monthly payment must be calculated first.');
