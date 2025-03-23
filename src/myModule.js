@@ -1,4 +1,9 @@
 const ceeLow = require("./ceeLow.js");
+const aprc = require('./APRCService.js');
+const LoanRequest= aprc.LoanRequest;
+const Fee= aprc.Fee;
+const RateChange= aprc.RateChange;
+
 function add(a, b) {
   return a + b;
 }
@@ -14,4 +19,4 @@ function ceeLowLose(){
  function ceeLowDie(){
   return  ceeLow.rollDice();
  }
-module.exports = { add, helloNpm ,ceeLowDie, ceeLowWin,ceeLowLose };
+module.exports = { add, helloNpm ,ceeLowDie, ceeLowWin,ceeLowLose, aprc, LoanRequest, Fee, RateChange };

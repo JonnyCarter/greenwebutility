@@ -1,4 +1,4 @@
-const { add ,helloNpm,ceeLowDie, ceeLowWin,ceeLowLose,ceeLowOutcome  } = require('./myModule');
+const { add ,helloNpm,ceeLowDie, ceeLowWin,ceeLowLose,ceeLowOutcome } = require('./myModule');
 describe('add function', () => {
   it('should add two numbers', () => {
     expect(add(2, 3)).toBe(5);

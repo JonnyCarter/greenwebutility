@@ -2,7 +2,7 @@
   "name": "greenwebutility",
   "version": "1.1.0",
   "description": "A helper module for testing and utilities",
-  "main": "src/myModule.js",
+  "main": "src/APRCService.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",

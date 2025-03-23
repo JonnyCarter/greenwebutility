@@ -5,8 +5,6 @@ const RateChange = require('./aprc/RateChange');
 const Fee = require('./aprc/Fee');
 const Error = require('./aprc/Error');
 class APRCService {
-    constructor() {
-    }
     calculateAPRC(loanRequest) {
         const validationError = this.validateLoanInputs(loanRequest);
         if (validationError) {
