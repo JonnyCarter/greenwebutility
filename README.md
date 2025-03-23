@@ -8,16 +8,33 @@ Install the module:
 You can test its working as expected by creating a testing script with the following
 // testScript.js
 ```
-const { add, helloNpm } = require('greenwebutility');
+const APRCService = require('greenwebutility'); // Import the class
 
-// Test the 'add' function
-console.log('Testing add function:');
-console.log('Result of add(2, 3):', add(2, 3)); // Expected: 5
-console.log('Result of add(-1, -2):', add(-1, -2)); // Expected: -3
+// Create an instance of the service
+const aprcService = new APRCService();
 
-// Test the 'helloNpm' function
-console.log('\nTesting helloNpm function:');
-console.log('Result of helloNpm():', helloNpm()); // Expected: 'Hello NPM!'
+// Example loan request object
+const loanRequest = {
+    loanId: "LN123",
+    loanAmount: 100000, // Loan amount
+    initialInterestRate: 5.0, // Initial interest rate in percentage
+    initialRateDurationYears: 5, // Initial rate duration in years
+    adjustedInterestRate: 6.5, // Adjusted interest rate after initial period
+    loanTermYears: 25, // Total loan term in years
+    fees: [
+        { Amount: 500, isIncludedInAPRC: () => true }, // Example fee
+        { Amount: 200, isIncludedInAPRC: () => true }  // Another fee
+    ],
+    rateChanges: [
+        { changeDate: "2028-01-01", previousRate: 5.0, newRate: 6.5 } // Example rate change
+    ]
+};
+
+// Call the `calculateAPRC` method
+const aprcResponse = aprcService.calculateAPRC(loanRequest);
+
+// Output the results
+console.log("APRC Calculation Response:", aprcResponse);
 ```
 You can run the script and see the output
 `node script.js` 
